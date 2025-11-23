@@ -1,7 +1,9 @@
 export interface Todo {
     id: string;
+    user_id: string;
     task: string;
     completed: boolean;
+    date_due: string;
     created_at: string;
     update_at: string;
 };
