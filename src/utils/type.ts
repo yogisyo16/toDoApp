@@ -14,4 +14,4 @@ export interface User {
     email: string;
     created_at: string;
     update_at: string;
-}
+};
