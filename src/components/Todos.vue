@@ -1,83 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import type { Todo } from "@/utils/type";
+import { useTodo } from "@/utils/useTodo";
 
-// --- STATE ---
-const todos = ref<Todo[]>([]);
-const taskInput = ref("");
-// Split state into two variables
-const datePart = ref(""); // Stores "2025-11-20"
-const timePart = ref(""); // Stores "14:30"
-const loading = ref(true);
-const finishTodos = ref(false);
-
-const apiUrl = import.meta.env.VITE_API_URL;
-
-// --- METHODS ---
-const formatDate = (dateString: string) => {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleString();
-};
-
-const fetchTodos = async () => {
-    try {
-        loading.value = true;
-        const res = await fetch(`${apiUrl}/api/v1/todos`);
-        const data = await res.json();
-        todos.value = data.data.items || [];
-    } catch (error) {
-        console.error("Error fetching todos:", error);
-    } finally {
-        loading.value = false;
-    }
-};
-
-const handleCreateTodo = async () => {
-    // Validation: Ensure Task, Date, and Time are all present
-    if (!taskInput.value.trim() || !datePart.value || !timePart.value) {
-        alert("Please fill in the task, date, and time.");
-        return;
-    }
-
-    try {
-        // datePart = "2025-11-20", timePart = "14:30"
-        // Result = "2025-11-20T14:30"
-        const combinedDateTime = `${datePart.value}T${timePart.value}`;
-
-        // 2. Convert to ISO 8601 for the backend
-        const isoDate = new Date(combinedDateTime).toISOString();
-
-        const res = await fetch(`${apiUrl}/api/v1/todos/create`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                task: taskInput.value,
-                date_due: isoDate,
-                completed: false,
-            }),
-        });
-
-        if (res.ok) {
-            // Clear all inputs
-            taskInput.value = "";
-            datePart.value = "";
-            timePart.value = "";
-            fetchTodos();
-        } else {
-            const errorData = await res.json();
-            alert(`Error: ${errorData.Msg}`);
-        }
-    } catch (error) {
-        console.error("Error creating todo:", error);
-    }
-};
-
-onMounted(() => {
-    fetchTodos();
-});
+const {
+    todos,
+    taskInput,
+    datePart,
+    timePart,
+    loading,
+    formatDate,
+    handleCreateTodo,
+} = useTodo();
 </script>
 
-<!-- UI -->
 <template>
     <div class="p-4 max-w-2xl mx-auto flex flex-row gap-4">
         <div class="flex flex-col">
