@@ -15,6 +15,12 @@ For more information about the backend, please visit [here](https://github.com/y
 
 This website soon will be deployed to [Vercel](https://vercel.com/).
 
+## Behind the scenes
+Why making a to-do list application? Simple nowadays a lot of web apps like Notion, Trello, and Asana are popular tools for managing tasks and projects. However, the popular option is also having more pricing option, which can be a barrier for some users. So here i want to create a simpler with also user friendly interface. and also provide the authentication and authorization. So that user can manage their tasks easily and securely.
+
+## Hope and meaning 
+Hopefully with this project it can grow and become more like notion, but more reliable and user friendly.
+
 ## Feature
 
 > Completed feature
