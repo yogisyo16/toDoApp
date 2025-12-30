@@ -7,16 +7,20 @@ export const useTodo = () => {
   const todos = ref<Todo[]>([]);
   const taskInput = ref("");
   const dateStartPart = ref("");
-  const timeStartPart = ref("");
-  const datePart = ref("");
-  const timePart = ref("");
+  const dateStartTimePart = ref("");
+  const dateDuePart = ref("");
+  const dateDueTimePart = ref("");
   const loading = ref(true);
-  const finishTodos = ref(false);
 
   // Methods
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
-    return new Date(dateString).toLocaleString();
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   const fetchTodos = async () => {
@@ -30,61 +34,54 @@ export const useTodo = () => {
     }
   };
 
-  const handleCreateTodo = async () => {
-    // Validation
-    if (!taskInput.value.trim() || !datePart.value || !timePart.value) {
-      alert("Please fill in the task, date, and time.");
-      return;
+  const handleCreateTodo = async (): Promise<boolean> => {
+    // Validation - only task and dates are required
+    if (!taskInput.value.trim() || !dateStartPart.value || !dateDuePart.value) {
+      alert("Please fill in the task name, start date, and due date.");
+      return false; // Return false on validation failure
     }
 
-    console.log(
-      "The data on First handle: ",
-      taskInput,
-      dateStartPart,
-      timeStartPart,
-      datePart,
-      timePart,
-      loading,
-      finishTodos,
-    );
+    // Date validation - start must be before or equal to due
+    const startDate = new Date(dateStartPart.value);
+    const dueDate = new Date(dateDuePart.value);
+
+    if (startDate > dueDate) {
+      alert("Start date cannot be after due date. Please check your dates.");
+      return false; // Return false on validation failure
+    }
 
     try {
-      const combineDateTimeStart = `${dateStartPart.value}T${timeStartPart.value}`;
-      const isoDateStart = new Date(combineDateTimeStart).toISOString();
-      // Combine date and time
-      const combinedDateTime = `${datePart.value}T${timePart.value}`;
-      const isoDate = new Date(combinedDateTime).toISOString();
+      // If time is provided, send full datetime; otherwise just send date
+      const dateStart = dateStartTimePart.value
+        ? `${dateStartPart.value}T${dateStartTimePart.value}:00Z`
+        : dateStartPart.value;
 
-      console.log(
-        "The data on TRY: ",
-        taskInput,
-        dateStartPart,
-        timeStartPart,
-        datePart,
-        timePart,
-        loading,
-        finishTodos,
-      );
+      const dateDue = dateDueTimePart.value
+        ? `${dateDuePart.value}T${dateDueTimePart.value}:00Z`
+        : dateDuePart.value;
 
       await createTodo({
         task: taskInput.value,
-        date_start: isoDateStart,
-        date_due: isoDate,
+        date_start: dateStart,
+        date_due: dateDue,
         completed: false,
       });
 
-      // Clear inputs
+      // Clear inputs only on success
       taskInput.value = "";
       dateStartPart.value = "";
-      timeStartPart.value = "";
-      datePart.value = "";
-      timePart.value = "";
+      dateStartTimePart.value = "";
+      dateDuePart.value = "";
+      dateDueTimePart.value = "";
 
       // Refresh todos
       await fetchTodos();
+
+      return true; // Return true on success
     } catch (error: any) {
       console.error("Error creating todo:", error);
       alert(`Error: ${error.message}`);
+      return false; // Return false on error
     }
   };
 
@@ -98,11 +95,10 @@ export const useTodo = () => {
     todos,
     taskInput,
     dateStartPart,
-    timeStartPart,
-    datePart,
-    timePart,
+    dateStartTimePart,
+    dateDuePart,
+    dateDueTimePart,
     loading,
-    finishTodos,
 
     // Methods
     formatDate,
