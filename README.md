@@ -6,6 +6,34 @@ In this project we will be using [Vue.js](https://vuejs.org/) as our frontend fr
 
 For more information about the backend, please visit [here](https://github.com/yogisyo16/mongo-todo-app).
 
+# Root Aura
+
+> **Root** your tasks. Find your **Aura**.
+
+Root Aura is a modern frontend application built with [Vue.js](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/). It serves as the interface for a robust Golang backend powered by [chi](https://github.com/go-chi/chi).
+
+For more information about the backend architecture, please visit the [repository here](https://github.com/yogisyo16/mongo-todo-app).
+
+---
+
+## Vision & Project Description
+
+**Current Status:** Minimalist To-Do Manager
+**Future Vision:** Comprehensive Productivity Workspace
+
+### The "Why"
+Tools like Notion, Trello, and Asana are powerful standard-bearers for productivity, but they often come with complexity, feature bloat, and pricing barriers that can hinder simple workflows.
+
+### The Concept
+**Root Aura** is designed to bridge the gap between simplicity and power:
+
+* **Root:** The application starts as a grounded, reliable tool for managing daily tasks—the "root" of your productivity. We prioritize speed, security, and a user-friendly interface.
+* **Aura:** As the project evolves, it will expand into a flexible workspace allowing for documentation, collaboration, and data management. The goal is to provide a clean "aura" where your ideas can flow without the clutter of traditional enterprise tools.
+
+We are building a workspace that offers the structural flexibility of Notion, but remains accessible and fast for individual users and small teams.
+
+---
+
 ## Getting started
 
 1. Clone the repository
@@ -14,12 +42,6 @@ For more information about the backend, please visit [here](https://github.com/y
 (`npm run dev`)
 
 This website soon will be deployed to [Vercel](https://vercel.com/).
-
-## Behind the scenes
-Why making a to-do list application? Simple nowadays a lot of web apps like Notion, Trello, and Asana are popular tools for managing tasks and projects. However, the popular option is also having more pricing option, which can be a barrier for some users. So here i want to create a simpler with also user friendly interface. and also provide the authentication and authorization. So that user can manage their tasks easily and securely.
-
-## Hope and meaning 
-Hopefully with this project it can grow and become more like notion, but more reliable and user friendly.
 
 ## Feature
 
