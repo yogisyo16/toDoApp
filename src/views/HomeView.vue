@@ -14,7 +14,7 @@ const navigateTo = (path: string) => {
 <template>
     <div class="min-h-screen bg-gray-900">
         <header class="bg-gray-800 shadow-md">
-            <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">
                         <h1 class="text-xl font-bold text-white">

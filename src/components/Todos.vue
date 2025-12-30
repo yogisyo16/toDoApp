@@ -39,7 +39,7 @@ const handleSubmit = async () => {
 
 <template>
     <!-- Rest of your template remains the same -->
-    <div class="p-4 max-w-6xl mx-auto">
+    <div class="p-4 mx-auto">
         <div class="flex flex-row gap-8">
             <div class="flex flex-col gap-2">
                 <h1 class="text-2xl font-bold mb-4 text-white">Create Todos</h1>
