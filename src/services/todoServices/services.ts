@@ -8,6 +8,7 @@ export const getTodos = async () => {
 
 export const createTodo = async (todoData: {
   task: string;
+  date_start: string;
   date_due: string;
   completed: boolean;
 }) => {

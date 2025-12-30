@@ -6,6 +6,8 @@ export const useTodo = () => {
   // State
   const todos = ref<Todo[]>([]);
   const taskInput = ref("");
+  const dateStartPart = ref("");
+  const timeStartPart = ref("");
   const datePart = ref("");
   const timePart = ref("");
   const loading = ref(true);
@@ -35,19 +37,46 @@ export const useTodo = () => {
       return;
     }
 
+    console.log(
+      "The data on First handle: ",
+      taskInput,
+      dateStartPart,
+      timeStartPart,
+      datePart,
+      timePart,
+      loading,
+      finishTodos,
+    );
+
     try {
+      const combineDateTimeStart = `${dateStartPart.value}T${timeStartPart.value}`;
+      const isoDateStart = new Date(combineDateTimeStart).toISOString();
       // Combine date and time
       const combinedDateTime = `${datePart.value}T${timePart.value}`;
       const isoDate = new Date(combinedDateTime).toISOString();
 
+      console.log(
+        "The data on TRY: ",
+        taskInput,
+        dateStartPart,
+        timeStartPart,
+        datePart,
+        timePart,
+        loading,
+        finishTodos,
+      );
+
       await createTodo({
         task: taskInput.value,
+        date_start: isoDateStart,
         date_due: isoDate,
         completed: false,
       });
 
       // Clear inputs
       taskInput.value = "";
+      dateStartPart.value = "";
+      timeStartPart.value = "";
       datePart.value = "";
       timePart.value = "";
 
@@ -68,6 +97,8 @@ export const useTodo = () => {
     // State
     todos,
     taskInput,
+    dateStartPart,
+    timeStartPart,
     datePart,
     timePart,
     loading,
