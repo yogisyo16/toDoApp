@@ -1,11 +1,3 @@
-# toDoApp
-
-This is the toDoApp Frontend that works with backend from golang using framework called [chi](https://github.com/go-chi/chi).
-
-In this project we will be using [Vue.js](https://vuejs.org/) as our frontend framework and [TypeScript](https://www.typescriptlang.org/) as our programming language.
-
-For more information about the backend, please visit [here](https://github.com/yogisyo16/mongo-todo-app).
-
 # Root Aura
 
 > **Root** your tasks. Find your **Aura**.
