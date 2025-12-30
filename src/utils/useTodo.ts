@@ -1,6 +1,10 @@
 import { ref, onMounted } from "vue";
 import type { Todo } from "@/services/todoServices/type";
-import { getTodos, createTodo } from "@/services/todoServices/services";
+import {
+  getTodos,
+  createTodo,
+  deleteTodo,
+} from "@/services/todoServices/services";
 
 export const useTodo = () => {
   // State
@@ -85,6 +89,21 @@ export const useTodo = () => {
     }
   };
 
+  const handleDeleteTodo = async (id: string) => {
+    try {
+      await deleteTodo(id);
+
+      // Refresh todos
+      await fetchTodos();
+
+      return true; // Return true on success
+    } catch (error: any) {
+      console.error("Error deleting todo:", error);
+      alert(`Error: ${error.message}`);
+      return false; // Return false on error
+    }
+  };
+
   // Initialize
   onMounted(() => {
     fetchTodos();
@@ -104,5 +123,6 @@ export const useTodo = () => {
     formatDate,
     fetchTodos,
     handleCreateTodo,
+    handleDeleteTodo,
   };
 };

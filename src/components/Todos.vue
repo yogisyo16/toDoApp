@@ -13,10 +13,14 @@ const {
     loading,
     formatDate,
     handleCreateTodo,
+    handleDeleteTodo,
 } = useTodo();
 
 // Modal state
 const isModalOpen = ref(false);
+
+// Track which menu is open (by todo id)
+const openMenuId = ref<string | null>(null);
 
 const openModal = () => {
     isModalOpen.value = true;
@@ -27,12 +31,40 @@ const closeModal = () => {
 };
 
 const handleSubmit = async () => {
-    // Call handleCreateTodo and wait for result
     const success = await handleCreateTodo();
-
-    // Only close modal if creation was successful
     if (success) {
         closeModal();
+    }
+};
+
+const toggleMenu = (todoId: string) => {
+    if (openMenuId.value === todoId) {
+        openMenuId.value = null;
+    } else {
+        openMenuId.value = todoId;
+    }
+};
+
+const closeMenu = () => {
+    openMenuId.value = null;
+};
+
+const handleEdit = (todoId: string) => {
+    console.log("Edit todo:", todoId);
+    // TODO: Implement edit functionality
+    closeMenu();
+};
+
+const handleDetails = (todoId: string) => {
+    console.log("View details:", todoId);
+    // TODO: Implement details view
+    closeMenu();
+};
+
+const handleDelete = async (todoId: string) => {
+    if (confirm("Are you sure you want to delete this todo?")) {
+        await handleDeleteTodo(todoId);
+        closeMenu();
     }
 };
 </script>
@@ -80,9 +112,106 @@ const handleSubmit = async () => {
                                 >Due: {{ formatDate(todo.date_due) }}</small
                             >
                         </div>
-                        <span class="text-sm font-medium">
-                            {{ todo.completed ? "✅ Done" : "⏳ Pending" }}
-                        </span>
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm font-medium">
+                                {{ todo.completed ? "✅ Done" : "⏳ Pending" }}
+                            </span>
+
+                            <!-- Menu Button with Dropdown -->
+                            <div class="relative">
+                                <button
+                                    @click="toggleMenu(todo.id)"
+                                    class="text-white bg-gray-700 hover:bg-gray-600 p-2 rounded-md transition-colors"
+                                    aria-label="Options menu"
+                                >
+                                    <!-- Three dots icon -->
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
+                                        />
+                                    </svg>
+                                </button>
+
+                                <!-- Dropdown Menu -->
+                                <div
+                                    v-if="openMenuId === todo.id"
+                                    class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200"
+                                >
+                                    <div class="py-1">
+                                        <!-- Edit Option (disabled for now) -->
+                                        <button
+                                            class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2"
+                                            disabled
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-4 w-4"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                                />
+                                            </svg>
+                                            Edit (Coming soon)
+                                        </button>
+
+                                        <!-- Details Option (disabled for now) -->
+                                        <button
+                                            class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2"
+                                            disabled
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-4 w-4"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M10 12a2 2 0 100-4 2 2 0 000 4z"
+                                                />
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                            Details (Coming soon)
+                                        </button>
+
+                                        <!-- Divider -->
+                                        <div
+                                            class="border-t border-gray-200"
+                                        ></div>
+
+                                        <!-- Delete Option (active) -->
+                                        <button
+                                            @click="handleDelete(todo.id)"
+                                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-4 w-4"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>
