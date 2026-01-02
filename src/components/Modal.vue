@@ -22,7 +22,7 @@ const handleClose = () => {
     >
         <div
             v-if="isOpen"
-            class="fixed inset-0 z-[9998] flex bg-black bg-opacity-50"
+            class="fixed inset-0 z-9998 flex bg-black bg-opacity-50"
             @click.self="handleClose"
         >
             <div class="w-full flex justify-center items-start pt-12 px-4">
