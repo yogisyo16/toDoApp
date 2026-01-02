@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { Todo } from "@/services/todoServices/type";
+// import IcEdit from "@/assets/icons/IcEdit.vue";
+// import IcPlus from "@/assets/icons/IcPlus.vue";
+// import IcEye from "@/assets/icons/IcEye.vue";
+// import IcTrash from "@/assets/icons/IcTrash.vue";
+// import IcMenu from "@/assets/icons/IcMenu.vue";
+// import IcChevronDown from "@/assets/icons/IcChevronDown.vue";
+import IcEdit from "../../assets/icons/IcEdit.vue";
+import IcPlus from "../../assets/icons/IcPlus.vue";
+import IcEye from "../../assets/icons/IcEye.vue";
+import IcTrash from "../../assets/icons/IcTrash.vue";
+import IcMenu from "../../assets/icons/IcMenu.vue";
+import IcChevronDown from "../../assets/icons/IcChevronDown.vue";
 
 // Define props
 const props = defineProps<{
@@ -47,6 +59,10 @@ const handleDelete = () => {
         closeMenu();
     }
 };
+
+const todoProgress = () => {
+    return props.todo.completed ? "Completed" : "In-Progress";
+};
 </script>
 
 <template>
@@ -54,7 +70,21 @@ const handleDelete = () => {
         class="flex justify-between items-center bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors"
     >
         <div>
-            <strong class="block text-white text-lg">{{ todo.task }}</strong>
+            <div class="flex items-center gap-2 mb-1">
+                <strong class="block text-white text-lg">{{
+                    todo.task
+                }}</strong>
+                <span
+                    class="px-2.5 py-1 text-xs font-semibold rounded-full"
+                    :class="
+                        todo.completed
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                            : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                    "
+                >
+                    {{ todoProgress() }}
+                </span>
+            </div>
             <small class="text-gray-400"
                 >Start: {{ formatDate(todo.date_start) }}</small
             >
@@ -78,20 +108,10 @@ const handleDelete = () => {
                     @click="toggleDetails"
                     class="text-sm text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        :class="{ 'rotate-180': showDetails }"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+                    <IcChevronDown
+                        :className="`h-4 w-4 ${showDetails ? 'rotate-180' : ''}`"
                         style="transition: transform 0.2s"
-                    >
-                        <path
-                            fill-rule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clip-rule="evenodd"
-                        />
-                    </svg>
+                    />
                     {{ showDetails ? "Hide Details" : "Show Details" }}
                 </button>
             </div>
@@ -149,16 +169,7 @@ const handleDelete = () => {
                     class="text-white bg-gray-700 hover:bg-gray-600 p-2 rounded-md transition-colors"
                     aria-label="Options menu"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
-                        />
-                    </svg>
+                    <IcMenu className="h-5 w-5" />
                 </button>
 
                 <!-- Dropdown Menu -->
@@ -171,36 +182,27 @@ const handleDelete = () => {
                             class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2"
                             disabled
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
-                                <path
-                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                />
-                            </svg>
-                            Edit Details(Coming soon)
+                            <!-- Edit icon - shown when details exist -->
+                            <IcEdit
+                                v-if="todo.todo_details?.id"
+                                className="h-4 w-4"
+                            />
+                            <!-- Plus icon - shown when no details -->
+                            <IcPlus v-else className="h-4 w-4" />
+
+                            {{
+                                todo.todo_details?.id
+                                    ? "Edit Details"
+                                    : "Add Details"
+                            }}
+                            (Coming soon)
                         </button>
 
                         <button
                             class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2"
                             disabled
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
+                            <IcEye className="h-4 w-4" />
                             Details (Coming soon)
                         </button>
 
@@ -210,18 +212,7 @@ const handleDelete = () => {
                             @click="handleDelete"
                             class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
+                            <IcTrash className="h-4 w-4" />
                             Delete
                         </button>
                     </div>
