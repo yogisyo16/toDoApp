@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+// This props is for usage on Todos.vue (The main components, where all other component will be merge)
 // Define props
 const props = defineProps<{
     taskInput: string;
