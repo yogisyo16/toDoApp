@@ -22,6 +22,23 @@ const emit = defineEmits<{
 }>();
 
 const isExtendModal = ref(false);
+const isExtendTimeModal = ref(false);
+
+const extendTimeModal = () => {
+    console.log("Added time");
+    isExtendTimeModal.value = true;
+};
+
+const closeTimeModal = () => {
+    console.log("Close time");
+    isExtendTimeModal.value = false;
+
+    // Reset date inputs
+    emit("update:dateStartPart", "");
+    emit("update:dateStartTimePart", "");
+    emit("update:dateDuePart", "");
+    emit("update:dateDueTimePart", "");
+};
 
 const extendModal = () => {
     console.log("Extend Modal");
@@ -55,106 +72,134 @@ const closeExtendModal = () => {
             />
         </div>
 
-        <div class="flex flex-col">
-            <label class="text-sm font-bold mb-1 text-gray-700"
-                >Start Date *</label
-            >
-            <input
-                type="date"
-                :value="dateStartPart"
-                @input="
-                    emit(
-                        'update:dateStartPart',
-                        ($event.target as HTMLInputElement).value,
-                    )
-                "
-                required
-                class="p-2 border border-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
+        <div class="flex flex-row gap-2 py-2">
+            <div v-if="!isExtendTimeModal" class="flex flex-col">
+                <button
+                    type="button"
+                    @click="extendTimeModal"
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
+                >
+                    Add date
+                </button>
+            </div>
+
+            <div v-if="!isExtendModal" class="flex flex-col">
+                <button
+                    type="button"
+                    @click="extendModal"
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
+                >
+                    Add details
+                </button>
+            </div>
         </div>
 
-        <div class="flex flex-col">
-            <label class="text-sm font-bold mb-1 text-gray-700"
-                >Start Time (Optional)</label
+        <div class="flex flex-col gap-4">
+            <!-- Extended form for Time -->
+            <div
+                v-if="isExtendTimeModal"
+                class="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-300"
             >
-            <input
-                type="time"
-                :value="dateStartTimePart"
-                @input="
-                    emit(
-                        'update:dateStartTimePart',
-                        ($event.target as HTMLInputElement).value,
-                    )
-                "
-                class="p-2 border border-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-            <small class="text-gray-500 mt-1"
-                >If not specified, defaults to 00:00</small
-            >
-        </div>
+                <div class="flex flex-col">
+                    <label class="text-sm font-bold mb-1 text-gray-700"
+                        >Start Date *</label
+                    >
+                    <input
+                        type="date"
+                        :value="dateStartPart"
+                        @input="
+                            emit(
+                                'update:dateStartPart',
+                                ($event.target as HTMLInputElement).value,
+                            )
+                        "
+                        required
+                        class="p-2 border border-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    />
+                </div>
 
-        <div class="flex flex-col">
-            <label class="text-sm font-bold mb-1 text-gray-700"
-                >Due Date *</label
-            >
-            <input
-                type="date"
-                :value="dateDuePart"
-                @input="
-                    emit(
-                        'update:dateDuePart',
-                        ($event.target as HTMLInputElement).value,
-                    )
-                "
-                required
-                class="p-2 border border-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-        </div>
+                <div class="flex flex-col">
+                    <label class="text-sm font-bold mb-1 text-gray-700"
+                        >Start Time (Optional)</label
+                    >
+                    <input
+                        type="time"
+                        :value="dateStartTimePart"
+                        @input="
+                            emit(
+                                'update:dateStartTimePart',
+                                ($event.target as HTMLInputElement).value,
+                            )
+                        "
+                        class="p-2 border border-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    />
+                    <small class="text-gray-500 mt-1"
+                        >If not specified, defaults to 00:00</small
+                    >
+                </div>
 
-        <div class="flex flex-col">
-            <label class="text-sm font-bold mb-1 text-gray-700"
-                >Due Time (Optional)</label
-            >
-            <input
-                type="time"
-                :value="dateDueTimePart"
-                @input="
-                    emit(
-                        'update:dateDueTimePart',
-                        ($event.target as HTMLInputElement).value,
-                    )
-                "
-                class="p-2 border border-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-            <small class="text-gray-500 mt-1"
-                >If not specified, defaults to 00:00</small
-            >
-        </div>
+                <div class="flex flex-col">
+                    <label class="text-sm font-bold mb-1 text-gray-700"
+                        >Due Date *</label
+                    >
+                    <input
+                        type="date"
+                        :value="dateDuePart"
+                        @input="
+                            emit(
+                                'update:dateDuePart',
+                                ($event.target as HTMLInputElement).value,
+                            )
+                        "
+                        required
+                        class="p-2 border border-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    />
+                </div>
 
-        <div v-if="!isExtendModal" class="flex flex-col">
-            <button
-                type="button"
-                @click="extendModal"
-                class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
-            >
-                Add details
-            </button>
-        </div>
+                <div class="flex flex-col">
+                    <label class="text-sm font-bold mb-1 text-gray-700"
+                        >Due Time (Optional)</label
+                    >
+                    <input
+                        type="time"
+                        :value="dateDueTimePart"
+                        @input="
+                            emit(
+                                'update:dateDueTimePart',
+                                ($event.target as HTMLInputElement).value,
+                            )
+                        "
+                        class="p-2 border border-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    />
+                    <small class="text-gray-500 mt-1"
+                        >If not specified, defaults to 00:00</small
+                    >
+                </div>
 
-        <!-- Extended Form -->
-        <div
-            v-if="isExtendModal"
-            class="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-300"
-        >
-            <h1 class="text-xl font-bold text-gray-800">Hello</h1>
+                <button
+                    type="button"
+                    @click="closeTimeModal"
+                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                >
+                    Close Time
+                </button>
+            </div>
 
-            <button
-                type="button"
-                @click="closeExtendModal"
-                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+            <!-- Extended Form Details-->
+            <div
+                v-if="isExtendModal"
+                class="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-300"
             >
-                Close Details
-            </button>
+                <h1 class="text-xl font-bold text-gray-800">Hello</h1>
+
+                <button
+                    type="button"
+                    @click="closeExtendModal"
+                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                >
+                    Close Details
+                </button>
+            </div>
         </div>
     </form>
 </template>
