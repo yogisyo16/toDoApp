@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useTodo } from "@/utils/useTodo";
+import { useAlert } from "@/utils/useAlert";
 import Modal from "../Modal.vue";
+import Alert from "../Alert.vue";
 import TodoItem from "./TodoItem.vue";
 import TodoForm from "./TodoForm.vue";
 
@@ -16,7 +18,12 @@ const {
     formatDate,
     handleCreateTodo,
     handleDeleteTodo,
+    handlStatusTodos,
 } = useTodo();
+
+// Alert state
+const { isAlertOpen, alertTitle, alertMessage, alertType, closeAlert } =
+    useAlert();
 
 // Modal state
 const isModalOpen = ref(false);
@@ -39,6 +46,15 @@ const handleSubmit = async () => {
 
 <template>
     <div class="p-4 mx-auto">
+        <!-- Alert Component -->
+        <Alert
+            :isOpen="isAlertOpen"
+            :title="alertTitle"
+            :message="alertMessage"
+            :type="alertType"
+            @close="closeAlert"
+        />
+
         <div class="flex flex-row gap-8">
             <div class="flex flex-col gap-2">
                 <h1 class="text-2xl font-bold mb-4 text-white">Create Todos</h1>
@@ -50,7 +66,7 @@ const handleSubmit = async () => {
                 </button>
             </div>
 
-            <div class="flex flex-col flex-1">
+            <div class="flex flex-col flex-1 gap-2">
                 <h1 class="text-2xl font-bold mb-4 text-white">My Todos</h1>
 
                 <div v-if="loading" class="text-white">
@@ -68,6 +84,7 @@ const handleSubmit = async () => {
                         :todo="todo"
                         :formatDate="formatDate"
                         @delete="handleDeleteTodo"
+                        @updateStatus="handlStatusTodos"
                     />
                 </ul>
             </div>

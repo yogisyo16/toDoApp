@@ -41,12 +41,15 @@ export const deleteTodo = async (id: string) => {
   return await response.json();
 };
 
-export const updateTodo = async (id: string, todoData: {
-  task: string;
-  date_start: string;
-  date_due: string;
-  completed: boolean;
-}) => {
+export const updateTodo = async (
+  id: string,
+  todoData: {
+    task: string;
+    date_start: string;
+    date_due: string;
+    completed: boolean;
+  },
+) => {
   const response = await fetch(`${apiUrl}/api/v1/todos/update/${id}`, {
     method: "PUT",
     headers: {
@@ -58,6 +61,19 @@ export const updateTodo = async (id: string, todoData: {
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.Msg || "Failed to update todo");
+  }
+
+  return await response.json();
+};
+
+export const toggleTodoComplete = async (id: string) => {
+  const response = await fetch(`${apiUrl}/api/v1/todos/${id}/complete`, {
+    method: "PATCH",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.Msg || "Failed to toggle completion");
   }
 
   return await response.json();
