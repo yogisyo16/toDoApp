@@ -4,9 +4,14 @@ import {
   getTodos,
   createTodo,
   deleteTodo,
+  updateTodo,
+  toggleTodoComplete,
 } from "@/services/todoServices/services";
+import { useAlert } from "./useAlert";
 
 export const useTodo = () => {
+  const { showSuccess, showError } = useAlert();
+
   // State
   const todos = ref<Todo[]>([]);
   const taskInput = ref("");
@@ -33,29 +38,27 @@ export const useTodo = () => {
       todos.value = await getTodos();
     } catch (error) {
       console.error("Error fetching todos:", error);
+      showError("Failed to load todos. Please try again.");
     } finally {
       loading.value = false;
     }
   };
 
   const handleCreateTodo = async (): Promise<boolean> => {
-    // Validation - only task and dates are required
-    if (!taskInput.value.trim() || !dateStartPart.value || !dateDuePart.value) {
-      alert("Please fill in the task name, start date, and due date.");
-      return false; // Return false on validation failure
+    if (!taskInput.value.trim()) {
+      showError("Please fill in the task name.", "Validation Error");
+      return false;
     }
 
-    // Date validation - start must be before or equal to due
     const startDate = new Date(dateStartPart.value);
     const dueDate = new Date(dateDuePart.value);
 
     if (startDate > dueDate) {
-      alert("Start date cannot be after due date. Please check your dates.");
-      return false; // Return false on validation failure
+      showError("Start date cannot be after due date.", "Invalid Dates");
+      return false;
     }
 
     try {
-      // If time is provided, send full datetime; otherwise just send date
       const dateStart = dateStartTimePart.value
         ? `${dateStartPart.value}T${dateStartTimePart.value}:00Z`
         : dateStartPart.value;
@@ -71,46 +74,54 @@ export const useTodo = () => {
         completed: false,
       });
 
-      // Clear inputs only on success
       taskInput.value = "";
       dateStartPart.value = "";
       dateStartTimePart.value = "";
       dateDuePart.value = "";
       dateDueTimePart.value = "";
 
-      // Refresh todos
       await fetchTodos();
+      showSuccess("Todo created successfully!", "Success");
 
-      return true; // Return true on success
+      return true;
     } catch (error: any) {
       console.error("Error creating todo:", error);
-      alert(`Error: ${error.message}`);
-      return false; // Return false on error
+      showError(error.message || "Failed to create todo", "Error");
+      return false;
     }
   };
 
   const handleDeleteTodo = async (id: string) => {
     try {
       await deleteTodo(id);
-
-      // Refresh todos
       await fetchTodos();
-
-      return true; // Return true on success
+      showSuccess("Todo deleted successfully!", "Deleted");
+      return true;
     } catch (error: any) {
       console.error("Error deleting todo:", error);
-      alert(`Error: ${error.message}`);
-      return false; // Return false on error
+      showError(error.message || "Failed to delete todo", "Error");
+      return false;
     }
   };
 
-  // Initialize
+  const handlStatusTodos = async (id: string) => {
+    try {
+      await toggleTodoComplete(id);
+      await fetchTodos();
+      showSuccess("Todo status updated!", "Updated");
+      return true;
+    } catch (error: any) {
+      console.error("Error update status:", error);
+      showError(error.message || "Failed to update status", "Error");
+      return false;
+    }
+  };
+
   onMounted(() => {
     fetchTodos();
   });
 
   return {
-    // State
     todos,
     taskInput,
     dateStartPart,
@@ -118,11 +129,10 @@ export const useTodo = () => {
     dateDuePart,
     dateDueTimePart,
     loading,
-
-    // Methods
     formatDate,
     fetchTodos,
     handleCreateTodo,
     handleDeleteTodo,
+    handlStatusTodos,
   };
 };

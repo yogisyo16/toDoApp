@@ -31,6 +31,11 @@ const navigateTo = (path: string) => {
                             Todos
                         </button>
                         <button
+                            class="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
+                        >
+                            Calendar
+                        </button>
+                        <button
                             @click="navigateTo('/settings')"
                             class="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors"
                         >

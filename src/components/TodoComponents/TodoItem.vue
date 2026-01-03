@@ -23,6 +23,7 @@ const props = defineProps<{
 // Define emits
 const emit = defineEmits<{
     delete: [id: string];
+    updateStatus: [id: string];
 }>();
 
 // Local state for this todo item
@@ -60,6 +61,10 @@ const handleDelete = () => {
     }
 };
 
+const handleStatusTodo = () => {
+    emit("updateStatus", props.todo.id);
+};
+
 const todoProgress = () => {
     return props.todo.completed ? "Completed" : "In-Progress";
 };
@@ -85,14 +90,18 @@ const todoProgress = () => {
                     {{ todoProgress() }}
                 </span>
             </div>
-            <small class="text-gray-400"
-                >Start: {{ formatDate(todo.date_start) }}</small
+
+            <div
+                v-if="todo.date_start !== null || todo.date_due !== null"
+                class="flex flex-col gap-1 py-2"
             >
-            <br />
-            <small class="text-gray-400"
-                >Due: {{ formatDate(todo.date_due) }}</small
-            >
-            <br />
+                <small v-if="todo.date_start !== null" class="text-gray-400">
+                    Start: {{ formatDate(todo.date_start) }}
+                </small>
+                <small v-if="todo.date_due !== null" class="text-gray-400">
+                    Due: {{ formatDate(todo.date_due) }}
+                </small>
+            </div>
 
             <!-- Show Details Button -->
             <div
@@ -199,11 +208,11 @@ const todoProgress = () => {
                         </button>
 
                         <button
-                            class="w-full text-left px-4 py-2 text-sm text-gray-400 cursor-not-allowed flex items-center gap-2"
-                            disabled
+                            @click="handleStatusTodo"
+                            class="w-full text-left px-4 py-2 text-sm text-black cursor-pointer flex items-center gap-2"
                         >
                             <IcEye className="h-4 w-4" />
-                            Details (Coming soon)
+                            Update Status
                         </button>
 
                         <div class="border-t border-gray-200"></div>
