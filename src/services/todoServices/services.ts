@@ -1,9 +1,25 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const getTodos = async () => {
-  const response = await fetch(`${apiUrl}/api/v1/todos`);
+export const getTodos = async (
+  page: number = 1,
+  limit: number = 10,
+  sortBy: string = "created_at",
+  sortOrder: string = "DESC",
+) => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    sort_by: sortBy,
+    sort_order: sortOrder,
+  });
+
+  const response = await fetch(`${apiUrl}/api/v1/todos?${params}`);
   const data = await response.json();
-  return data.data.items || [];
+
+  return {
+    items: data.data.items || [],
+    pagination: data.data.pagination,
+  };
 };
 
 export const createTodo = async (todoData: {

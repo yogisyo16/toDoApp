@@ -1,4 +1,4 @@
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import type { Todo } from "@/services/todoServices/type";
 import {
   getTodos,
@@ -21,6 +21,16 @@ export const useTodo = () => {
   const dateDueTimePart = ref("");
   const loading = ref(true);
 
+  // Pagination & Sorting state
+  const currentPage = ref(1);
+  const itemsPerPage = ref(10);
+  const sortBy = ref("created_at");
+  const sortOrder = ref<"ASC" | "DESC">("DESC");
+  const totalPages = ref(0);
+  const totalItems = ref(0);
+  const hasNext = ref(false);
+  const hasPrev = ref(false);
+
   // Methods
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
@@ -35,7 +45,18 @@ export const useTodo = () => {
   const fetchTodos = async () => {
     try {
       loading.value = true;
-      todos.value = await getTodos();
+      const response = await getTodos(
+        currentPage.value,
+        itemsPerPage.value,
+        sortBy.value,
+        sortOrder.value,
+      );
+
+      todos.value = response.items;
+      totalPages.value = response.pagination.total_pages;
+      totalItems.value = response.pagination.total_items;
+      hasNext.value = response.pagination.has_next;
+      hasPrev.value = response.pagination.has_prev;
     } catch (error) {
       console.error("Error fetching todos:", error);
       showError("Failed to load todos. Please try again.");
@@ -50,22 +71,29 @@ export const useTodo = () => {
       return false;
     }
 
-    const startDate = new Date(dateStartPart.value);
-    const dueDate = new Date(dateDuePart.value);
+    // Only validate dates if both are provided
+    if (dateStartPart.value && dateDuePart.value) {
+      const startDate = new Date(dateStartPart.value);
+      const dueDate = new Date(dateDuePart.value);
 
-    if (startDate > dueDate) {
-      showError("Start date cannot be after due date.", "Invalid Dates");
-      return false;
+      if (startDate > dueDate) {
+        showError("Start date cannot be after due date.", "Invalid Dates");
+        return false;
+      }
     }
 
     try {
-      const dateStart = dateStartTimePart.value
-        ? `${dateStartPart.value}T${dateStartTimePart.value}:00Z`
-        : dateStartPart.value;
+      const dateStart = dateStartPart.value
+        ? dateStartTimePart.value
+          ? `${dateStartPart.value}T${dateStartTimePart.value}:00Z`
+          : dateStartPart.value
+        : "";
 
-      const dateDue = dateDueTimePart.value
-        ? `${dateDuePart.value}T${dateDueTimePart.value}:00Z`
-        : dateDuePart.value;
+      const dateDue = dateDuePart.value
+        ? dateDueTimePart.value
+          ? `${dateDuePart.value}T${dateDueTimePart.value}:00Z`
+          : dateDuePart.value
+        : "";
 
       await createTodo({
         task: taskInput.value,
@@ -80,6 +108,8 @@ export const useTodo = () => {
       dateDuePart.value = "";
       dateDueTimePart.value = "";
 
+      // Reset to first page when creating new todo
+      currentPage.value = 1;
       await fetchTodos();
       showSuccess("Todo created successfully!", "Success");
 
@@ -117,6 +147,42 @@ export const useTodo = () => {
     }
   };
 
+  // Pagination methods
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages.value) {
+      currentPage.value = page;
+    }
+  };
+
+  const nextPage = () => {
+    if (hasNext.value) {
+      currentPage.value++;
+    }
+  };
+
+  const prevPage = () => {
+    if (hasPrev.value) {
+      currentPage.value--;
+    }
+  };
+
+  const changeItemsPerPage = (limit: number) => {
+    itemsPerPage.value = limit;
+    currentPage.value = 1; // Reset to first page
+  };
+
+  const changeSorting = (field: string, order: "ASC" | "DESC") => {
+    sortBy.value = field;
+    sortOrder.value = order;
+    currentPage.value = 1; // Reset to first page when sorting changes
+  };
+
+  // Watch for changes in pagination/sorting and fetch new data
+  // This is Vue's equivalent to React's useEffect
+  watch([currentPage, itemsPerPage, sortBy, sortOrder], () => {
+    fetchTodos();
+  });
+
   onMounted(() => {
     fetchTodos();
   });
@@ -129,10 +195,25 @@ export const useTodo = () => {
     dateDuePart,
     dateDueTimePart,
     loading,
+    // Pagination & Sorting
+    currentPage,
+    itemsPerPage,
+    sortBy,
+    sortOrder,
+    totalPages,
+    totalItems,
+    hasNext,
+    hasPrev,
     formatDate,
     fetchTodos,
     handleCreateTodo,
     handleDeleteTodo,
     handlStatusTodos,
+    // Pagination methods
+    goToPage,
+    nextPage,
+    prevPage,
+    changeItemsPerPage,
+    changeSorting,
   };
 };
