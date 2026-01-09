@@ -6,6 +6,7 @@ import {
   deleteTodo,
   updateTodo,
   toggleTodoComplete,
+  getTodosDetailsById,
 } from "@/services/todoServices/services";
 import { useAlert } from "./useAlert";
 
@@ -63,6 +64,12 @@ export const useTodo = () => {
     } finally {
       loading.value = false;
     }
+  };
+
+  const fetchDetailsId = async (id: string) => {
+    const response = await getTodosDetailsById(id);
+
+    return response;
   };
 
   const handleCreateTodo = async (): Promise<boolean> => {
@@ -206,6 +213,7 @@ export const useTodo = () => {
     hasPrev,
     formatDate,
     fetchTodos,
+    fetchDetailsId,
     handleCreateTodo,
     handleDeleteTodo,
     handlStatusTodos,

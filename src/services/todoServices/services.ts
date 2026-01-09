@@ -94,3 +94,23 @@ export const toggleTodoComplete = async (id: string) => {
 
   return await response.json();
 };
+
+export const getTodosDetailsById = async (id: string) => {
+  const response = await fetch(`api/v1/todos/tododetails/${id}`);
+
+  return response.json();
+};
+
+export const getTodosDetailByTodoId = async (id: string) => {
+  const response = await fetch(
+    `${apiUrl}/api/v1/todos/tododetails/todoid/${id}`,
+  );
+
+  return response.json();
+};
+
+export const getTodosDetailsAll = async () => {
+  const response = await fetch(`${apiUrl}/api/v1/todos/tododetails`);
+
+  return response.json;
+};

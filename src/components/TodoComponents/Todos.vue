@@ -9,6 +9,7 @@ import TodoForm from "./TodoForm.vue";
 
 const {
     todos,
+    fetchDetailsId,
     taskInput,
     dateStartPart,
     dateStartTimePart,
