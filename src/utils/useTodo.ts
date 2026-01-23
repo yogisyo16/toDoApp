@@ -7,6 +7,7 @@ import {
   updateTodo,
   toggleTodoComplete,
   getTodosDetailsById,
+  createTodosDetails,
 } from "@/services/todoServices/services";
 import { useAlert } from "./useAlert";
 
@@ -21,6 +22,11 @@ export const useTodo = () => {
   const dateDuePart = ref("");
   const dateDueTimePart = ref("");
   const loading = ref(true);
+
+  const taskDetails = ref("");
+  const notesDetails = ref("");
+  const statusDetails = ref("");
+  const priorityDetails = ref("");
 
   // Pagination & Sorting state
   const currentPage = ref(1);
@@ -128,6 +134,22 @@ export const useTodo = () => {
     }
   };
 
+  const handleCreateTodoDetails = async (id: string): Promise<boolean> => {
+    if (taskDetails.value.trim()) {
+      await createTodosDetails(id, {
+        task_details: taskDetails.value,
+        notes_details: notesDetails.value,
+        status_details: statusDetails.value,
+        priority_details: priorityDetails.value,
+      });
+
+      return true;
+    } else {
+      showError("No data ges.", "Validation Error");
+      return false;
+    }
+  };
+
   const handleDeleteTodo = async (id: string) => {
     try {
       await deleteTodo(id);
@@ -201,6 +223,11 @@ export const useTodo = () => {
     dateStartTimePart,
     dateDuePart,
     dateDueTimePart,
+    // Details
+    taskDetails,
+    notesDetails,
+    statusDetails,
+    priorityDetails,
     loading,
     // Pagination & Sorting
     currentPage,
@@ -215,6 +242,7 @@ export const useTodo = () => {
     fetchTodos,
     fetchDetailsId,
     handleCreateTodo,
+    handleCreateTodoDetails,
     handleDeleteTodo,
     handlStatusTodos,
     // Pagination methods

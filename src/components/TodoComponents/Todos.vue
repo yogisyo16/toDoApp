@@ -15,6 +15,10 @@ const {
     dateStartTimePart,
     dateDuePart,
     dateDueTimePart,
+    taskDetails,
+    notesDetails,
+    priorityDetails,
+    statusDetails,
     loading,
     formatDate,
     handleCreateTodo,
@@ -104,6 +108,7 @@ const handleSubmit = async () => {
                     v-model:dateStartTimePart="dateStartTimePart"
                     v-model:dateDuePart="dateDuePart"
                     v-model:dateDueTimePart="dateDueTimePart"
+                    v-model:taskDetails="taskDetails"
                     @submit="handleSubmit"
                 />
             </template>

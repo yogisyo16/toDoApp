@@ -44,6 +44,31 @@ export const createTodo = async (todoData: {
   return await response.json();
 };
 
+export const createTodosDetails = async (
+  id: string,
+  todoDetails: {
+    task_details: string;
+    notes_details: string;
+    status_details: string;
+    priority_details: string;
+  },
+) => {
+  const response = await fetch(`${apiUrl}/api/v1/todos/${id}/details`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(todoDetails),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.Msg || "Failed to create todo");
+  }
+
+  return await response.json();
+};
+
 export const deleteTodo = async (id: string) => {
   const response = await fetch(`${apiUrl}/api/v1/todos/delete/${id}`, {
     method: "DELETE",

@@ -118,7 +118,7 @@ const todoProgress = () => {
             <div
                 v-if="
                     todo.todo_details?.task_details ||
-                    todo.todo_details?.note_details ||
+                    todo.todo_details?.notes_details ||
                     todo.todo_details?.status_details ||
                     todo.todo_details?.priority_details
                 "
@@ -153,7 +153,7 @@ const todoProgress = () => {
                         <small class="text-gray-300">
                             Notes:
                             <span class="text-gray-400">
-                                {{ todo.todo_details?.note_details || "N/A" }}
+                                {{ todo.todo_details?.notes_details || "N/A" }}
                             </span>
                         </small>
                     </div>
